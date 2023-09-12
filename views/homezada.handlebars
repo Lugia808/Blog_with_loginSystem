@@ -1,28 +1,50 @@
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="#">Página de Login</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Sobre</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Serviços</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contato</a>
-                    </li>
-                </ul>
-            </div>
+<!-- Barra de navegação -->
+<nav class="navbar navbar-expand-lg navbar-light bg-success">
+    <div class="container">
+        <a class="navbar-brand" href="#">Meu Blog</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Página Inicial</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Blog</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Sobre Nós</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contato</a>
+                </li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
+
+<!-- Conteúdo principal -->
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>Bem-vindo ao Meu Blog</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at tristique felis. Curabitur quis elit eu elit pharetra rhoncus. Vestibulum euismod facilisis nunc, vel fermentum neque tincidunt vel.</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Posts Recentes</h3>
+            <ul class="list-group">
+                {{#each result}}
+                <li class="list-group-item"><a href="#">{{dataValues.titulo}}</a></li>
+                
+                {{/each}}
+                <hr>
+                <li class="list-group-item"><button class="btn btn-info"><a href="/postagem/add" class="text-white">Criar Postagem</a></button></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 
     <!-- Cabeçalho com Imagem de Fundo -->
     <div class="jumbotron text-center">
@@ -36,8 +58,15 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <h4>Já temos um total de {{count}} contas registradas</h4>
+                <h4>Já temos um total de {{count1}} contas registradas</h4>
             </div>
 
         </div>
     </div>
+
+    <!-- Rodapé -->
+<footer class="bg-dark text-light text-center py-3">
+    <div class="container">
+        &copy; 2023 Meu Blog
+    </div>
+</footer>

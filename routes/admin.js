@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const User = require('../models/User');
+const Post = require('../models/Post');
 const { Op } = require('sequelize');
 const multer = require('multer');
 const path = require('path');
@@ -45,7 +46,16 @@ router.get('/', (req, res) => {
   req.session.destroy()
   User.count()
     .then(count => {
-      res.render('homezada', { message: message, count: count });
+      var count1 = count
+      Post.findAll().then((result)=>{
+        console.log(result)
+        res.render('homezada', { 
+          message: message, 
+          count1: count1,
+          result: result 
+        });
+      })
+
     })
     .catch(error => {
       console.error(error);
@@ -64,7 +74,23 @@ router.get('/home', (req, res) => {
 
       if (result) {
         message.push('Seja bem vindo, ' + result.username)
-        res.render('home', { result: result, message: message })
+        User.findbyId(result.id, {
+          include: [
+            {model: Post,
+            as: 'posts'}
+          ]
+        }).then((user)=>{
+          if(user){
+            res.render('home', { result: result, message: message })
+          }
+          else{
+            console.log('erro')
+          }
+        }).catch((error)=>{
+          console.log(error)
+        })
+
+
       } else {
         console.log('Sessão não encontrada')
         message.push('Sessão não encontrada 1')
@@ -143,5 +169,30 @@ router.post('/registro', upload.single('imagem'), async (req, res) => {
   }
 });
 
+router.get('/postagem/add', (req, res)=>{
+  res.render('postagemAdd')
+})
+
+router.post('/postagem/add', async (req, res) => {
+  try {
+    var title = req.body.titulo;
+    var conteudo = req.body.conteudo;
+    console.log(title, conteudo);
+
+    const result = await Post.create({
+      titulo: req.body.titulo,
+      conteudo: req.body.conteudo,
+    });
+
+    console.log(result);
+
+    // Respond with a success message or redirect to another page
+    res.send('Post created successfully');
+  } catch (error) {
+    console.error(error);
+    // Handle the error and respond accordingly
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 module.exports = router
