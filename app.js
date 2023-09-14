@@ -39,6 +39,8 @@ app.use((req, res, next) =>{
     next()
 })
 
+app.use(express.static('public'))
+
 // Configuração de rotas
 const router = require('./routes/admin'); // Suponha que você tenha um arquivo 'routes.js' para definir suas rotas
 app.use('/', router);

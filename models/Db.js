@@ -14,8 +14,13 @@ try {
 
 
 
-
   module.exports = {
     Sequelize : Sequelize,
     sequelize : sequelize
   }
+
+const Post = require('./Post')
+const User = require('./User')
+
+User.hasMany(Post, { foreignKey: 'userId', as: 'posts' });
+Post.belongsTo(User, { foreignKey: 'userId', as: 'user' });

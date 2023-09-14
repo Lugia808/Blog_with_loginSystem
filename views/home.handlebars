@@ -2,13 +2,13 @@
     <div class="container">
         <a class="navbar-brand" href="#">Minha Rede Social</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Página Inicial</a>
+                    <a class="nav-link" href="/">Página Inicial</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Perfil</a>
@@ -20,7 +20,7 @@
                     <a class="nav-link" href="#">Configurações</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Sair</a>
+                    <a class="nav-link" href="/logout">Sair</a>
                 </li>
             </ul>
         </div>
@@ -34,10 +34,29 @@
             <!-- Postagens dos amigos -->
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Nome do Amigo</h5>
-                    <p class="card-text">Esta é uma postagem de exemplo em minha rede social.</p>
+                    <h5 class="card-title">Minhas postagens</h5>
+                    <div class="card mb-2">
+                        {{#if posts}}
+                        {{#each posts}}
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="">Título: {{dataValues.titulo}}</h5>
+                                <p>Conteúdo: {{dataValues.conteudo}}</p>
+                            </div>
+                            <hr>
+                        </div>
+
+                        {{/each}}
+                        {{else}}
+                        <h6 class="m-2 text-center">Você ainda não publicou nada</h6>
+                        {{/if}}
+
+                    </div>
+                    <a href="/postagem/add"><button class="btn-sm btn-success">Criar Postagem</button></a>
                 </div>
             </div>
+
+
             <!-- Outras postagens dos amigos... -->
         </div>
         <div class="col-md-4">
@@ -45,10 +64,9 @@
             <div class="card mb-3">
 
 
-                <img src="/{{result.dataValues.perfil_img}}" class="card-img-top" alt="Imagem do Perfil">
-
+                <img src="{{resultado.dataValues.perfil_img}}" class="card-img-top" alt="Imagem do Perfil">
                 <div class="card-body">
-                    <h5 class="card-title">{{result.dataValues.username}}</h5>
+                    <h5 class="card-title">{{resultado.dataValues.username}}</h5>
 
 
                     <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
