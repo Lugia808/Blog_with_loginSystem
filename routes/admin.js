@@ -112,7 +112,26 @@ router.get('/', async (req, res) => {
 
 router.get('/logout',(req, res)=>{
   req.session.destroy()
+<<<<<<< HEAD
   res.redirect('/')
+=======
+  User.count()
+    .then(count => {
+      var count1 = count
+      Post.findAll().then((result)=>{
+        console.log(result)
+        res.render('homezada', { 
+          message: message, 
+          count1: count1,
+          result: result 
+        });
+      })
+
+    })
+    .catch(error => {
+      console.error(error);
+    });
+>>>>>>> c76c0e37270a0e00cf01abd16416dc948d2cff18
 })
 
 router.get('/home', (req, res) => {
@@ -125,6 +144,7 @@ router.get('/home', (req, res) => {
     }).then((result) => {
       const resultado = result
       if (result) {
+<<<<<<< HEAD
         message.push('Seja bem vindo(a), ' + result.username)
         User.findAll( {
           where: {
@@ -157,6 +177,17 @@ router.get('/home', (req, res) => {
               })
             
 
+=======
+        message.push('Seja bem vindo, ' + result.username)
+        User.findbyId(result.id, {
+          include: [
+            {model: Post,
+            as: 'posts'}
+          ]
+        }).then((user)=>{
+          if(user){
+            res.render('home', { result: result, message: message })
+>>>>>>> c76c0e37270a0e00cf01abd16416dc948d2cff18
           }
           else{
             console.log('erro')
@@ -246,6 +277,31 @@ router.post('/registro', upload.single('imagem'), async (req, res) => {
   }
 });
 
+router.get('/postagem/add', (req, res)=>{
+  res.render('postagemAdd')
+})
+
+router.post('/postagem/add', async (req, res) => {
+  try {
+    var title = req.body.titulo;
+    var conteudo = req.body.conteudo;
+    console.log(title, conteudo);
+
+    const result = await Post.create({
+      titulo: req.body.titulo,
+      conteudo: req.body.conteudo,
+    });
+
+    console.log(result);
+
+    // Respond with a success message or redirect to another page
+    res.send('Post created successfully');
+  } catch (error) {
+    console.error(error);
+    // Handle the error and respond accordingly
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 
 router.get('/postagem/add', (req, res)=>{
