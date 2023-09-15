@@ -1,0 +1,22 @@
+<hr>
+<h1>Postagens</h1>
+
+<div class="card">
+    <div class="card-body">
+        {{#each result}}
+        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start active mb-2"
+        >
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Título: {{dataValues.titulo}}</h5>
+
+                <small>3 dias atrás</small>
+            </div>
+            <div class="bg-dark rounded-2 p-2">
+                <h6>{{dataValues.conteudo}}</h6>
+            </div>
+            <!-- Há um erro aqui--> <small>Usuário: {{lookup ../userMap this.dataValues.userId}}<!-- Estudar--></small>
+        </a>
+
+        {{/each}}
+    </div>
+</div>
