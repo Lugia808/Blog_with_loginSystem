@@ -48,83 +48,54 @@ const upload = multer({
 
 router.get('/', async (req, res) => {
   var message = [];
+  const userPostsArray = []; // Defina o array aqui
+
   if (req?.session?.passport?.user) {
     var session = req?.session?.passport?.user;
-    console.log('Sessão:', session);
     try {
       const count = await User.count();
       const count1 = count;
-      const result = await Post.findAll({
-        include: {
-          model: User,
-          as: 'user',
-        },
-      }); 
 
-      const userMap = {};
-      result.forEach((post) => {
-        if (post && post.dataValues && post.dataValues.user && post.dataValues.user.dataValues) {
-            const userId = post.dataValues.id;
-            const username = post.dataValues.user.dataValues.username;
-            userMap[userId] = username;
-        } else {
-            console.error('Invalid post object:')
-        }
-    });
-    ;
+      const resultPosts = await Post.findAll({
+        order: [['createdAt', 'DESC']]
+      });
+
       res.render('homezada', {
+        result: resultPosts,
         message: message,
         count1: count1,
-        result: result,
         session: session,
-        userMap: userMap,
       });
-    } catch (error) {
-      console.error('Ocorreu um erro ao buscar os dados', error);
-      res.status(500).send('Erro ao buscar dados');
+    } catch (erro) {
+      console.log('erro: ', erro);
+      res.status(500).send('Erro ao buscar dados do usuário');
     }
   } else {
     try {
-      const result = await Post.findAll({
-        include: {
-          model: User,
-          as: 'user',
-        },
+      const resultPosts = await Post.findAll({
+        order: [['createdAt', 'DESC']]
       });
 
-      console.log('TESTE')
-      
-      const userMap = {};
-      result.forEach((post) => {
-        if (post.dataValues.user) {
-            const userId = post.dataValues.id;
-            const username = post.dataValues.user.dataValues.username;
-            userMap[userId] = username;
-            console.log(userId)
-            console.log('testes', username)
-        } else {
-            console.error('Número de post desconhecido');
-        }
-    });
-    
+      console.log('data: ',resultPosts[0].createdAt)
 
       const count = await User.count();
       const count1 = count;
+
+
       console.log('Rodando sem sessão');
       session = undefined;
       res.render('homezada', {
         message: message,
+        result: resultPosts,
         count1: count1,
-        result: result,
-        session: session,
-        userMap: userMap,
+        session: session
       });
-    } catch (error) {
-      console.error('Ocorreu um erro ao buscar os dados', error);
-      res.status(500).send('Erro ao buscar dados');
-    }
-  }
-});
+
+    }catch(error){
+      console.log(error)
+    }};
+
+    })
 
 
 router.get('/logout',(req, res)=>{
@@ -132,27 +103,38 @@ router.get('/logout',(req, res)=>{
   res.redirect('/') 
 })
 
-router.get('/perfil/:id', (req, res) => {
+router.get('/perfil/:id', async (req, res) => {
   var message = []
-  console.log(req.params.id)
-  console.log(req?.session?.passport?.user)
-  if (req?.session?.passport?.user == req.params.name) {
+
+  if(req?.session?.passport?.user){
+    console.log(`sessão: ${req?.session?.passport?.user}`)
+  const UserFind = await User.findOne({where:{
+    id: req?.session?.passport?.user
+  }})
+  
+  if (UserFind.username === req.params.id) {
     User.findOne({
       where: {id: req.session.passport.user}, })
       .then((result) => {
       const resultado = result
       if (result) {
         message.push('Seja bem vindo(a), ' + result.username)
-        User.findAll( {where: {id: req.session.passport.user},
-          include: [{
+        User.findAll({
+          where: {
+            id: req.session.passport.user
+          },
+          include: [
+            {
               model: Post,
-            as: 'posts'
-          },]
+              as: 'posts'
+            }
+          ],
+          order: [[{ model: Post, as: 'posts' }, 'createdAt', 'DESC']] // Ordenar em ordem decrescente pela coluna 'createdAt' da tabela 'Post'
         })
         .then((user)=>{
           if(user){Post.findAll({
               where:{
-                userId: user[0].id
+                userId: req.session.passport.user
               }})
               .then((result1)=>{
                 res.render('perfil', { 
@@ -178,9 +160,32 @@ router.get('/perfil/:id', (req, res) => {
     }).catch((error) => {
       console.log('ocorreu um erro,', error)
     })
-  } else {
-    console.log('Sessão não encontrada')
-    res.redirect('/')
+  }else{
+    //Vendo perfil logado, mas não é o dono
+
+    //Precisa-se ajeitar a parte de postagens do usuário
+    const UserFind1 = await User.findAll({where:{username: req.params.id}});
+
+    
+    const UserFind = UserFind1[0]
+    session1 = req.session.passport.user
+    session = undefined
+    res.render('perfil', {
+      resultado: UserFind,
+      session1: session1,
+      session: session
+    })
+  }} else {
+    //Vendo o perfil sem estar logado
+    console.log('Sessão não encontrada');
+
+    const UserFind1 = await User.findAll({where:{username: req.params.id}});
+    const UserFind = UserFind1[0]
+    session = undefined
+    res.render('perfil', {
+      resultado: UserFind,
+      session: session
+    })
   }
 })
 
@@ -258,63 +263,33 @@ router.get('/postagem/add', (req, res)=>{
 })
 
 router.post('/postagem/add', async (req, res) => {
-  try {
-    var title = req.body.titulo;
-    var conteudo = req.body.conteudo;
-
-    const result = await Post.create({
-      titulo: req.body.titulo,
-      conteudo: req.body.conteudo,
-      userId: req?.session?.passport?.user
-    });
-
-    // Respond with a success message or redirect to another page
-    res.redirect('/')
-  } catch (error) {
-    console.error(error);
-    // Handle the error and respond accordingly
-    res.status(500).send('Internal Server Error');
-  }
-});
-
-
-router.get('/postagem/add', (req, res)=>{
-  var message = []
-  if(req?.session?.passport?.user){
-  res.render('postagemAdd')
-  }else{
-    message.push('Faça login para continuar')
-    res.render('login', {message: message})
-    console.log('Sessão não cadastrada')
-  } 
-})
-
-router.post('/postagem/add', async (req, res) => {
   var message = []
   if(req?.session?.passport?.user){
   try {
     var title = req.body.titulo;
     var conteudo = req.body.conteudo;
 
-
+    const userResult = await User.findOne({where: {id: req.session.passport.user}})
     const result = await Post.create({
       titulo: req.body.titulo,
       conteudo: req.body.conteudo,
-      userId: req.session.passport.user
-    });
-
-    res.redirect('/')
-  }catch (error) {
-    console.error(error);
-
-    res.status(500).send('Internal Server Error');
-  }
-
+      userId: req?.session?.passport?.user,
+      username: userResult.username
+    }).then(()=>{
+      console.log('registro bem sucedido.');
+      res.redirect('/postagens')
+    })
+  }catch(error){
+      console.log(error)
+      console.error(error);
+      message.push('Ocorreu um erro')
+      res.redirect('/')
+    };
   }else{
-    message.push('Faça login para continuar')
-    res.render('login', {message: message})
-    console.log('Sessão não cadastrada')
-  } 
+  message.push('Faça login para continuar')
+  res.render('login', {message: message})
+  console.log('Sessão não cadastrada')
+} 
 });
 
 router.post('/deletarpost/:id', (req, res)=>{
@@ -324,7 +299,7 @@ router.post('/deletarpost/:id', (req, res)=>{
         id: req.params.id
       }
     }).then(()=>{
-      res.redirect('/')
+      res.redirect('/perfil')
     }).catch((error)=>{
       console.log('Ocorreu um erro: ', error)
     })
@@ -334,84 +309,46 @@ router.post('/deletarpost/:id', (req, res)=>{
 
 router.get('/postagens',async (req, res)=>{
   var message = []
-  try {
-    const result = await Post.findAll({
-      include: {
-        model: User,
-        as: 'user',
-      },
-    });
-    const userMap = {};
-    result.forEach((post) => {
-      if (post.dataValues.user) {
-          const userId = post.dataValues.id;
-          const username = post.dataValues.user.dataValues.username;
-          userMap[userId] = username;
-      } else {
-          console.error('Número de post desconhecido');
-      }
-  });
-    const count = await User.count();
+  if(req?.session?.passport?.user){
+    const result = await Post.findAll({order: [['createdAt', 'DESC']]});
+
+    
     console.log('Rodando sem sessão');
-    session = undefined;
+    var session = req.session.passport.user
     res.render('postagens', {
       message: message,
-      count1: count1,
       result: result,
       session: session,
-      userMap: userMap,
+      session: session
     });
-  } catch (error) {
-    console.error('Ocorreu um erro ao buscar os dados', error);
-    res.status(500).send('Erro ao buscar dados');
-  }
-})
+
+}else{
+    const result = await Post.findAll({order: [['createdAt', 'DESC']]});
+    console.log('Rodando sem sessão');
+    var session = undefined;
+    res.render('postagens', {
+      message: message,
+      result: result,
+      session: session,
+      session: session
+    });
+  }}
+  
+  )
 
 router.get('/amigos', (req, res)=>{
   if (req?.session?.passport?.user) {
-    User.findOne({
-      where: {id: req.session.passport.user}, })
-      .then((result) => {
-      const resultado = result
-      if (result) {
-        User.findAll( {where: {id: req.session.passport.user},
-          include: [{
-              model: Post,
-            as: 'posts'
-          },]
-        })
-        .then((user)=>{
-          if(user){Friends.findAll({
-              where:{
-                userId: user[0].id
-              }})
-              .then((result1)=>{
-                res.render('amigos', { 
-                  resultado: resultado,
-                  posts: result1
-                })
-              }).catch((error)=>{
-                console.log('Ocorreu um erro ao buscar os usuários', error)
-              })
-          }
-          else{
-            console.log('erro')
-          }
-        }).catch((error)=>{
-          console.log(error)
-        })
-      } else {
-        console.log('Sessão não encontrada')
-        message.push('Sessão não encontrada 1')
-        res.redirect('/')
-      }
-    }).catch((error) => {
-      console.log('ocorreu um erro,', error)
-    })
-  } else {
-    console.log('Sessão não encontrada')
+    
+    res.render('amigos');
+
+  }
+  else{
     res.redirect('/')
   }
+})
+
+router.get('/agradecimentos', (req, res)=>{
+  res.render('agradecimentos')
 })
 
 module.exports = router

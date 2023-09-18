@@ -1,56 +1,58 @@
 <!-- Conteúdo principal -->
-<div class="bg-gray border">
-    <div class="container mt-4 border">
-        <div class="row">
-            <div class="col-8 d-flex align-items-center justify-content-center rounded-1 flex-column"
-                style="background-image: radial-gradient(circle at 82.92% 38.02%, #c9feff 0, #acf1fc 12.5%, #8ae3f7 25%, #60d3f2 37.5%, #0cc1ed 50%, #00afe9 62.5%, #009ee6 75%, #008ee3 87.5%, #0080e0 100%); min-height: 60vh;">
-                <div class="text-center">
-                    <h1 class="text-xl">Bem-vindo ao Blog<span class="text-primary">Nelson</span><span
-                            class="text-warning">Js</span></h1>
+<!-- Conteúdo principal -->
+<div class="container mt-4 border">
+    <div class="row">
+        <div class="col-md-8 col-12 d-flex align-items-center justify-content-center rounded-1 flex-column"
+            style="background-image: radial-gradient(circle at 82.92% 38.02%, #c9feff 0, #acf1fc 12.5%, #8ae3f7 25%, #60d3f2 37.5%, #0cc1ed 50%, #00afe9 62.5%, #009ee6 75%, #008ee3 87.5%, #0080e0 100%); min-height: 60vh; background-size: cover; background-position: center;">
+            <div class="text-center">
+                <h1 class="text-xl">Bem-vindo ao Blog<span class="text-primary">Nelson</span><span
+                        class="text-warning">Js</span></h1>
 
-                    <p class="text-lg">Compartilhe o que mais gosta, você vai adorar nossa comunidade!</p>
-                </div>
-
-                <div class="d-flex justify-content-center card mt-4">
-
-                    <a href="/postagens"><button class="btn btn-success btn-lg">Página de Postagens</button></a>
-
-                </div>
-
+                <p class="text-lg">Compartilhe o que mais gosta, você vai adorar nossa comunidade!</p>
             </div>
 
+            <div class="d-flex justify-content-center card mt-4">
+                <a href="/postagens"><button class="btn btn-success btn-lg">Página de Postagens</button></a>
+            </div>
+        </div>
 
-            <div class="col-md-4 d-flex justify-content-center flex-column">
-                <h3 class="text-center">Posts Recentes</h3>
-                <div style="max-height: 40vh; overflow-y:auto">
-
-                    <ul class="list-group">
-                        {{#each result}}
-                        <div class="list-group-item list-group-item-action flex-column align-items-start active mb-2"
-                            style="max-height: 100px;">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1">Título: {{dataValues.titulo}}</h6>
-                                <small>3 dias atrás</small>
-                            </div>
-                            <!-- Há um erro aqui-->
-                            <small>Usuário:
-                                <form action="/perfil/{{lookup ../Map this.dataValues.userId}}" method="get">
-                                    <a href="/perfil/"
-                                        class="link-dark">{{lookup ../userMap this.dataValues.userId}}</a>
-                                </form>
-
-                                <!-- Estudar-->
-                            </small>
+        <div class="col-md-4 col-12 d-flex justify-content-center flex-column">
+            <h3 class="text-center">Posts Recentes</h3>
+            <div style="max-height: 40vh; overflow-y:auto">
+                <ul class="list-group">
+                    {{#each result}}
+                    <div class="list-group-item list-group-item-action flex-column align-items-start bg-success mb-2"
+                        style="max-height: 100px;">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 text-white">Título: {{dataValues.titulo}}</h6>
+                            <small>X dias atrás</small>
                         </div>
+                        <!-- Há um erro aqui-->
+                        <small class="text-black">Usuário:
+                            <a href="/perfil/{{dataValues.username}}" class="link-dark">{{dataValues.username}}</a>
+                            <!-- Estudar-->
+                        </small>
+                    </div>
+                    {{/each}}
 
-                        {{/each}}
-                    </ul>
-                </div>
-                <a href="/postagem/add" class="text-white btn btn-info mt-3">Criar Postagem</a>
+                    {{#each userPostsArray}}
+                    <div class="user-post">
+                        <h2>Usuário: {{this.user}}</h2>
+                        <ul>
+                            {{#each this.posts}}
+                            <li>{{this.titulo}}</li>
+                            <!-- Outras informações do post, se necessário -->
+                            {{/each}}
+                        </ul>
+                    </div>
+                    {{/each}}
+                </ul>
             </div>
+            <a href="/postagem/add" class="text-white btn btn-info mt-3">Criar Postagem</a>
         </div>
     </div>
 </div>
+
 
 
 <!-- Cabeçalho com Imagem de Fundo -->
@@ -74,3 +76,18 @@
 
     </div>
 </div>
+
+    <section id="quem-somos" class="py-5 card">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9">
+                    <h2>Natanael Silva</h2>
+                    <p>Olá, me chamo Natanael Silva. Eu criei esse blog com o intuito de treinar meus limites, claro que não fiz sem ajudas, agradeço a todos por qualquer ajuda, pensando nisso eu criei uma página apenas para <a href="/agradecimentos">agradecimentos</a>.</p>
+                    <p>Curabitur euismod facilisis odio, a posuere nibh vestibulum eget. Cras vitae nibh ipsum. Fusce sed dolor at justo rhoncus mollis. Donec sodales, justo at euismod fermentum.</p>
+                </div>
+                <div class="col-md-3">
+                    <img src="/imagens/1693273227277.jpeg" alt="Imagem da equipe" class="img-fluid  rounded-circle equipe-img">
+                </div>
+            </div>
+        </div>
+    </section>

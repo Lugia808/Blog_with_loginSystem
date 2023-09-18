@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 
-const sequelize = new Sequelize('users', 'root', 'root', {
+const sequelize = new Sequelize('postsbg', 'root', '', {
     host: 'localhost',
     dialect: 'mysql'
 })
@@ -25,6 +25,7 @@ const Friends = require('./Friends')
 
 User.hasMany(Post, { foreignKey: 'userId', as: 'posts' });
 Post.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
 
 User.hasMany(Friends, { foreignKey: 'userId', as: 'friends' });
 Post.belongsTo(User, { foreignKey: 'userId', as: 'userfriend' });

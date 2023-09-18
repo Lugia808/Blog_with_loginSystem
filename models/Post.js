@@ -17,9 +17,14 @@ const User = sequelize.define('posts', {
     },
     userId: {
         type: Sequelize.INTEGER,
-        unique: true
+        unique: false
         // = o número do id do usuário
     },
+    username: {
+        type: Sequelize.STRING,
+        unique: false,
+        allowNull: false
+    }
 }, {
     tableName: 'posts',
     timestamps: true, // Adjust as needed}

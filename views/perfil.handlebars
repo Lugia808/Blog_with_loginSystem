@@ -1,6 +1,7 @@
 
 
 <!-- Conteúdo principal -->
+{{#if session}}
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-8">
@@ -38,10 +39,9 @@
         <div class="col-md-4">
             <!-- Informações do perfil -->
             <div class="card mb-3">
-                 <img src="{{resultado.dataValues.perfil_img}}" class="card-img-top" alt="Imagem do Perfil">
+                 <img src="/{{resultado.dataValues.perfil_img}}" class="card-img-top" alt="Imagem do Perfil">
                 <div class="card-body">
                     <h5 class="card-title">{{resultado.dataValues.username}}</h5>
-
 
                     <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                 </div>
@@ -49,3 +49,55 @@
         </div>
     </div>
 </div>
+
+
+
+<!-- Conteúdo principal -->
+{{else}}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Postagens dos amigos -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Postagens de {{resultado.dataValues.username}}</h5>
+                    <div class="card mb-2">
+                        {{#if posts}}
+                        {{#each posts}}
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="">Título: {{dataValues.titulo}}</h5>
+                                <p>Conteúdo: {{dataValues.conteudo}}</p>
+                                <form action="/deletarpost/{{dataValues.id}}" method="post">
+                                <a href="#"><button class="btn btn-danger">Deletar</button></a>
+                                </form>
+                            </div>
+                            
+                            <hr>
+                            
+                        </div>
+
+                        {{/each}}
+                        {{else}}
+                        <h6 class="m-2 text-center">{{resultado.dataValues.username}} ainda não publicou nada</h6>
+                        {{/if}}
+
+                    </div>
+                </div>
+            </div>
+            <!-- Outras postagens dos amigos... -->
+        </div>
+        <div class="col-md-4">
+            <!-- Informações do perfil -->
+            <div class="card mb-3">
+                 <img src="/{{resultado.dataValues.perfil_img}}" class="card-img-top" alt="Imagem do Perfil">
+                <div class="card-body">
+                    <h5 class="card-title">{{resultado.dataValues.username}}</h5>
+
+                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{/if}}
